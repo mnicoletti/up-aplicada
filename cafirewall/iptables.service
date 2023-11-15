@@ -1,0 +1,9 @@
+[Unit]
+Description=Persist iptables rules
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/aplicada/up-aplicada/cafirewall/iptables.sh
+
+[Install]
+WantedBy=multi-user.target
