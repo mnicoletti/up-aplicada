@@ -25,6 +25,12 @@ iface enp0s8 inet static
 
 EOF
 
+# Restart de interfaces
+ifdown enp0s3
+ifup enp0s3
+ifdown enp0s8
+ifup enp0s8
+
 # Configuracion de iptables como servicio
 cp ${LOCAL_DIR}/iptables.service ${IPTABLES_SERVICE}
 systemctl daemon-reload
