@@ -1,0 +1,74 @@
+sdb y sdc
+Tengo que particionarlo
+fdisk /dev/sdb n p 1 enter enter w
+fdisk /dev/sdc n p 1 enter enter w
+
+Crear el raid
+sudo mdadm --create /dev/md0 --level=1 --raid-devices=2 /dev/sdb1 /dev/sdc1
+
+Crear un grupo de volumenes
+sudo vgcreate backups-vg /dev/md0 
+
+Crear el volumen logico
+sudo lvcreate -n backups -l 100%VG backups-vg
+
+Formatear la unidad con un sistema de archivos
+sudo mkfs.ext4 /dev/backups-vg/backups
+
+Montar 
+sudo mount /dev/backups-vg/backups /media/backups
+
+En caso querer eliminar la raid1
+umount /media/backups
+mdadm --stop /dev/md0
+mdadm --zero-superblock /dev/sdb1 /dev/sdc1
+
+
+sdd y sde
+tengo que particionarlo
+fdisk /dev/sdd n p 1 enter enter w
+fdisk /dev/sde n p 1 enter +2048MB w
+
+Una vez particinado crear un grupo de volumenes usando lvm2 con el comando
+sudo vgcreate data-vg /dev/ssd1 /dev/sde1
+
+Para crear volumenes logicos del data-vg tengo que hacer
+sudo lvcreate -n data1 -l 20%VG data-vg
+sudo lvcreate -n data2 -l 80%VG data-vg
+
+Formatear los volumenes logicos con un sistema de archivos
+sudo mkfs.ext4 /dev/data-vg/data1
+sudo mkfs.ext4 /dev/data-vg/data2
+
+creamos la carpeta data1 y data2 en media
+sudo mkdir -p /media/data1
+sudo mkdir -p /media/data2
+
+Y finalmente montamos las unidades 
+sudo mount /dev/data-vg/data1 /media/data1
+sudo mount /dev/data-vg/data2 /media/data2
+
+
+sde2
+particionar
+fdisk /dev/sde n p 2 enter +1024MB
+
+Crear grupo de volumenes 
+sudo vgcreate docs-vg /dev/sde2
+
+Crear volumen logico
+sudo lvcreate -n docs -l 100%VG docs-vg
+
+Formatear volumen logico con un sistema de archivo
+sudo mkfs.ext4 /dev/docs-vg/docs
+
+Crear carpeta en media/docs
+
+Y finalmente montar la unidad
+sudo mount /dev/docs-vg/docs /media/docs
+
+
+
+
+
+
